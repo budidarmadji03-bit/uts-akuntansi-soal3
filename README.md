@@ -7,7 +7,7 @@ Aplikasi pembelajaran voucher kas keluar untuk Soal 3.1a, 3.1b, dan 3.2. Fronten
 - **3.1a:** Form voucher dinamis, validasi sisi browser, klasifikasi arus kas, autentikasi Supabase, pengambilan chart of accounts, RPC posting, riwayat, detail/audit, reversal, dan verifikasi hash tersedia dalam kode. Uji browser lokal dilakukan; transaksi Supabase belum diuji karena project credentials belum disediakan.
 - **3.1b:** Analisis awal dan prompt NotebookLM tersedia di `docs/3.1b_verifikasi_psak2.md`. NotebookLM belum digunakan; temuan NotebookLM berstatus **BELUM DIVERIFIKASI**.
 - **3.2:** Implementasi SQL kanonis tersedia di `3.2_audit_trail.sql`; belum diterapkan atau diuji di project Supabase.
-- **Deployment:** Belum dipublikasikan. Jika GitHub Pages diaktifkan, itu hanya melayani file statis; autentikasi, database, dan RPC tetap memerlukan Supabase.
+- **Deployment:** Frontend statis sudah dipublikasikan melalui GitHub Pages: https://budidarmadji03-bit.github.io/uts-akuntansi-soal3/. Halaman dan asset berhasil dimuat. Posting transaksi tetap belum tersedia sampai project dan konfigurasi Supabase disiapkan; GitHub Pages hanya melayani frontend.
 
 ## Struktur
 
