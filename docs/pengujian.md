@@ -3,7 +3,7 @@
 ## Lingkungan yang tersedia
 
 - Pemeriksaan awal purwarupa lama di browser file: perhitungan rupiah, keseimbangan, tanggal masa depan, aturan Kas, tambah/hapus, submit lokal tanpa penyimpanan — **PASS saat versi frontend sebelumnya diuji**.
-- Versi terbaru setelah integrasi Supabase: harus diuji lagi dengan konfigurasi kosong dan browser setelah membuka halaman.
+- Versi terbaru setelah integrasi Supabase: halaman dibuka dari file lokal tanpa konfigurasi; tombol posting tetap terkunci dan tidak ada error JavaScript halaman yang terdeteksi pada skenario yang dijalankan.
 - Pemeriksaan Problems editor: sebelumnya tidak menemukan error untuk frontend 3.1a sebelum integrasi; belum setara dengan uji build lengkap.
 - Node.js dan `psql` tidak tersedia di environment ini.
 - Tidak ada Supabase project URL, key, maupun koneksi database yang disediakan. Semua pengujian backend, integrasi, concurrency, dan RLS **NOT RUN**.
@@ -13,15 +13,15 @@
 
 | ID | Langkah | Hasil yang diharapkan | Hasil aktual | Status |
 |---|---|---|---|---|
-| FE-01 | Buka `index.html` pada browser | Form tampil responsif tanpa error JS | Versi awal tampil; versi integrasi harus diuji ulang | NOT RUN (final) |
-| FE-02 | Tambah lalu hapus baris jurnal | Baris dan total diperbarui | Berhasil pada versi awal | PASS (versi awal) |
-| FE-03 | Debit Rp0,10 + Rp0,20, kredit Rp0,30 | Total sen tepat Rp0,30 dan SEIMBANG | Berhasil pada versi awal | PASS (versi awal) |
-| FE-04 | Ubah kredit agar berbeda | TIDAK SEIMBANG dan selisih terlihat | Berhasil pada versi awal | PASS (versi awal) |
-| FE-05 | Isi tanggal besok Asia/Jakarta | Submit dikunci dengan alasan tanggal | Berhasil pada versi awal | PASS (versi awal) |
+| FE-01 | Buka `index.html` pada browser | Form tampil responsif tanpa error JS | Versi final tampil dari file lokal; tidak ada error JS halaman yang terdeteksi pada skenario yang dijalankan | PARTIAL (final; belum uji ukuran layar) |
+| FE-02 | Tambah lalu hapus baris jurnal | Baris dan total diperbarui | Tambah/hapus baris berhasil pada versi final | PASS (final) |
+| FE-03 | Debit Rp0,10 + Rp0,20, kredit Rp0,30 | Total sen tepat Rp0,30 dan SEIMBANG | Menampilkan debit/kredit Rp0,30 dan SEIMBANG pada versi final | PASS (final) |
+| FE-04 | Ubah kredit agar berbeda | TIDAK SEIMBANG dan selisih terlihat | Kredit Rp0,31 menampilkan TIDAK SEIMBANG dan selisih Rp0,01 | PASS (final) |
+| FE-05 | Isi tanggal besok Asia/Jakarta | Submit dikunci dengan alasan tanggal | Tanggal besok memunculkan alasan tanggal dan mengunci submit | PASS (final) |
 | FE-06 | Isi kredit non-kas atau debit akun Kas | Aturan kas keluar gagal | Berhasil pada versi awal | PASS (versi awal) |
 | FE-07 | Masukkan lebih dari 2 desimal/nominal negatif/baris nol | Nominal dinyatakan invalid dan submit dikunci | Presisi desimal diuji di versi awal; negative/zero ditelaah secara kode | PARTIAL |
 | FE-08 | Checklist review tidak dicentang | Submit terkunci; alasan tampil | Berhasil pada versi awal | PASS (versi awal) |
-| FE-09 | Submit tanpa konfigurasi Supabase | Tidak ada transaksi palsu; konfigurasi/login diwajibkan | Belum menjalankan versi integrasi final | NOT RUN |
+| FE-09 | Submit tanpa konfigurasi Supabase | Tidak ada transaksi palsu; konfigurasi/login diwajibkan | Tanpa konfigurasi, submit terkunci dan alasan konfigurasi ditampilkan; tidak ada klaim penyimpanan | PASS (final, konfigurasi kosong) |
 | FE-10 | Submit dengan konfigurasi dan sesi nyata | RPC merespons id/hash atau error eksplisit | Tidak ada project/key | NOT RUN |
 
 ## Matriks Soal 3.2 (integrasi Supabase)
