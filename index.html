@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0f172a">
+  <title>Voucher Kas Keluar | Sistem Akuntansi</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="min-h-screen bg-slate-100 text-slate-800 antialiased">
+  <header class="bg-slate-900 text-white">
+    <div class="mx-auto flex max-w-7xl items-center gap-3 px-4 py-5 sm:px-6 lg:px-8">
+      <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-500 text-xl font-bold" aria-hidden="true">A</div>
+      <div>
+        <p class="text-sm font-medium text-blue-200">Sistem Informasi Akuntansi</p>
+        <h1 class="text-lg font-semibold sm:text-xl">Voucher Kas Keluar</h1>
+      </div>
+      <span class="ml-auto rounded-full border border-slate-600 px-3 py-1 text-xs font-medium text-slate-300">Soal 3.1a · 3.1b · 3.2</span>
+    </div>
+  </header>
+
+  <main class="mx-auto max-w-7xl space-y-6 px-4 py-8 sm:px-6 lg:px-8">
+    <div class="mb-6">
+      <p class="text-sm font-medium text-blue-700">Pencatatan transaksi</p>
+      <h2 class="mt-1 text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">Entri transaksi kas keluar</h2>
+      <p class="mt-2 max-w-3xl text-sm leading-6 text-slate-600">Lengkapi informasi voucher dan jurnal. Validasi finansial dilakukan kembali oleh Supabase sebelum posting.</p>
+    </div>
+
+    <section aria-labelledby="connection-heading" class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
+      <div class="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h3 id="connection-heading" class="font-semibold text-slate-900">Koneksi dan autentikasi</h3>
+          <p id="connection-status" role="status" aria-live="polite" class="mt-1 text-sm text-amber-800">Memeriksa konfigurasi Supabase...</p>
+        </div>
+        <button id="sign-out" type="button" class="hidden rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">Keluar</button>
+      </div>
+      <form id="auth-form" class="mt-4 grid gap-3 sm:grid-cols-[1fr_1fr_auto_auto]">
+        <label class="sr-only" for="auth-email">Email</label>
+        <input id="auth-email" type="email" autocomplete="username" required placeholder="Email akun Supabase" class="rounded-lg border border-slate-300 px-3 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100">
+        <label class="sr-only" for="auth-password">Kata sandi</label>
+        <input id="auth-password" type="password" autocomplete="current-password" required minlength="6" placeholder="Kata sandi" class="rounded-lg border border-slate-300 px-3 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100">
+        <button type="submit" data-auth-action="sign-in" class="rounded-lg bg-blue-700 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-800">Masuk</button>
+        <button type="submit" data-auth-action="sign-up" class="rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50">Daftar</button>
+      </form>
+      <p class="mt-3 text-xs leading-5 text-slate-500">Masukkan Project URL dan anon/publishable key di <code>supabase-config.js</code>. Jangan pernah memasukkan service_role key di frontend.</p>
+    </section>
+
+    <div id="app-content" class="space-y-6 opacity-60">
+    <form id="journal-form" novalidate class="space-y-6">
+      <section aria-labelledby="transaction-heading" class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
+        <div class="mb-5 flex items-center gap-3 border-b border-slate-100 pb-4">
+          <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 text-sm font-bold text-blue-700">01</span>
+          <div>
+            <h3 id="transaction-heading" class="font-semibold text-slate-900">Informasi transaksi</h3>
+            <p class="text-sm text-slate-500">Identitas bukti pengeluaran kas</p>
+          </div>
+        </div>
+        <div class="grid gap-5 md:grid-cols-2">
+          <div>
+            <label for="date" class="mb-1.5 block text-sm font-medium text-slate-700">Tanggal transaksi <span class="text-rose-600">*</span></label>
+            <input id="date" name="date" type="date" required class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm shadow-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100">
+            <p class="mt-1.5 text-xs text-slate-500">Tanggal tidak boleh melewati hari ini (WIB).</p>
+          </div>
+          <div>
+            <label for="voucher" class="mb-1.5 block text-sm font-medium text-slate-700">Nomor voucher / bukti <span class="text-rose-600">*</span></label>
+            <input id="voucher" name="voucher" type="text" required maxlength="50" autocomplete="off" placeholder="Contoh: KK-001" class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm shadow-sm outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-100">
+          </div>
+          <div class="md:col-span-2">
+            <label for="description" class="mb-1.5 block text-sm font-medium text-slate-700">Deskripsi / tujuan pengeluaran</label>
+            <textarea id="description" name="description" rows="2" maxlength="300" placeholder="Contoh: pembayaran tagihan listrik bulan Oktober" class="w-full resize-y rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm shadow-sm outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-100"></textarea>
+            <p class="mt-1 text-xs text-slate-500">Opsional untuk purwarupa ini.</p>
+          </div>
+          <div>
+            <label for="cash-flow-activity" class="mb-1.5 block text-sm font-medium text-slate-700">Klasifikasi aktivitas arus kas <span class="text-rose-600">*</span></label>
+            <select id="cash-flow-activity" required class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100">
+              <option value="">Pilih klasifikasi</option>
+              <option value="OPERASI">Operasi</option>
+              <option value="INVESTASI">Investasi</option>
+              <option value="PENDANAAN">Pendanaan</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <section aria-labelledby="journal-heading" class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
+        <div class="mb-5 flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4">
+          <div class="flex items-center gap-3">
+            <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 text-sm font-bold text-blue-700">02</span>
+            <div>
+              <h3 id="journal-heading" class="font-semibold text-slate-900">Detail jurnal</h3>
+              <p class="text-sm text-slate-500">Masukkan akun dan nominal pada sisi yang sesuai</p>
+            </div>
+          </div>
+          <button type="button" id="add-line" class="inline-flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-3.5 py-2 text-sm font-semibold text-blue-700 transition hover:bg-blue-100 focus:outline-none focus:ring-4 focus:ring-blue-100">
+            <span aria-hidden="true" class="text-lg leading-none">+</span> Tambah baris
+          </button>
+        </div>
+
+        <div class="overflow-x-auto rounded-lg border border-slate-200">
+          <table class="w-full min-w-[720px] border-collapse text-left text-sm">
+            <caption class="sr-only">Baris jurnal voucher kas keluar</caption>
+            <thead class="bg-slate-50 text-xs uppercase tracking-wide text-slate-600">
+              <tr>
+                <th scope="col" class="px-4 py-3 font-semibold">Akun</th>
+                <th scope="col" class="w-52 px-4 py-3 font-semibold">Debit (Rp)</th>
+                <th scope="col" class="w-52 px-4 py-3 font-semibold">Kredit (Rp)</th>
+                <th scope="col" class="w-24 px-4 py-3 text-center font-semibold">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="journal-lines" class="divide-y divide-slate-100 bg-white"></tbody>
+          </table>
+        </div>
+        <p class="mt-2 text-xs leading-5 text-slate-500">Untuk voucher kas keluar, akun Kas harus dikredit dan tidak boleh didebit. Baris kosong tidak dihitung.</p>
+
+        <div class="mt-5 grid gap-3 sm:grid-cols-3">
+          <div class="rounded-xl border border-slate-200 bg-slate-50 p-4">
+            <p class="text-xs font-medium uppercase tracking-wide text-slate-500">Total debit</p>
+            <p id="total-debit" class="mt-1 text-lg font-bold tabular-nums text-slate-900">Rp0,00</p>
+          </div>
+          <div class="rounded-xl border border-slate-200 bg-slate-50 p-4">
+            <p class="text-xs font-medium uppercase tracking-wide text-slate-500">Total kredit</p>
+            <p id="total-credit" class="mt-1 text-lg font-bold tabular-nums text-slate-900">Rp0,00</p>
+          </div>
+          <div id="balance-card" class="rounded-xl border border-rose-200 bg-rose-50 p-4">
+            <p class="text-xs font-medium uppercase tracking-wide text-rose-700">Selisih debit dan kredit</p>
+            <p id="balance-status" role="status" aria-live="polite" class="mt-1 text-sm font-bold text-rose-800">TIDAK SEIMBANG</p>
+            <p id="difference" class="mt-0.5 text-sm tabular-nums text-rose-700">Selisih: Rp0,00</p>
+          </div>
+        </div>
+      </section>
+
+      <section aria-labelledby="checks-heading" class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
+        <div class="mb-4 flex items-center gap-3">
+          <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 text-sm font-bold text-blue-700">03</span>
+          <div>
+            <h3 id="checks-heading" class="font-semibold text-slate-900">Checklist aturan bisnis</h3>
+            <p class="text-sm text-slate-500">Pemeriksaan otomatis dan konfirmasi sebelum validasi</p>
+          </div>
+        </div>
+        <ul id="business-checklist" class="grid gap-2 sm:grid-cols-2"></ul>
+        <div id="submit-reasons" class="mt-5 rounded-lg border border-amber-200 bg-amber-50 p-4" aria-live="polite">
+          <p class="text-sm font-semibold text-amber-900">Lengkapi hal berikut sebelum melanjutkan:</p>
+          <ul id="reason-list" class="mt-2 list-inside list-disc space-y-1 text-sm text-amber-900"></ul>
+        </div>
+      </section>
+
+      <div class="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <p class="max-w-2xl text-xs leading-5 text-slate-500">Tombol di bawah hanya memvalidasi formulir lokal. Purwarupa ini belum terhubung ke server atau database sehingga tidak menyimpan dan tidak mem-posting jurnal.</p>
+        <button id="submit-button" type="submit" disabled class="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-blue-700 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-200 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-600 disabled:shadow-none">
+          <span id="submit-spinner" class="hidden h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" aria-hidden="true"></span>
+          <span id="submit-label">Submit &amp; Posting Jurnal</span>
+        </button>
+      </div>
+      <p id="message" role="status" aria-live="polite" class="hidden rounded-lg border px-4 py-3 text-sm"></p>
+    </form>
+    <section aria-labelledby="history-heading" class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h3 id="history-heading" class="font-semibold text-slate-900">Riwayat jurnal</h3>
+          <p class="mt-1 text-sm text-slate-500">Jurnal POSTED, detail audit, dan pemeriksaan checksum.</p>
+        </div>
+        <button id="refresh-history" type="button" class="rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">Muat ulang</button>
+      </div>
+      <div class="mt-4 overflow-x-auto rounded-lg border border-slate-200">
+        <table class="w-full min-w-[680px] text-left text-sm">
+          <thead class="bg-slate-50 text-xs uppercase tracking-wide text-slate-600">
+            <tr><th class="px-4 py-3">Tanggal</th><th class="px-4 py-3">Voucher</th><th class="px-4 py-3">Status</th><th class="px-4 py-3">Hash</th><th class="px-4 py-3">Aksi</th></tr>
+          </thead>
+          <tbody id="history-rows" class="divide-y divide-slate-100"></tbody>
+        </table>
+      </div>
+      <p id="history-empty" class="mt-3 text-sm text-slate-500">Masuk untuk memuat riwayat jurnal.</p>
+      <div id="journal-detail" class="mt-5 hidden rounded-xl border border-slate-200 bg-slate-50 p-4">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <h4 id="detail-title" class="font-semibold text-slate-900">Detail jurnal</h4>
+          <button id="verify-hash" type="button" class="rounded-lg border border-blue-200 bg-white px-3 py-2 text-sm font-semibold text-blue-700 hover:bg-blue-50">Verifikasi hash</button>
+        </div>
+        <pre id="detail-lines" class="mt-3 overflow-x-auto whitespace-pre-wrap text-xs leading-5 text-slate-700"></pre>
+        <p id="hash-result" role="status" aria-live="polite" class="mt-2 text-sm"></p>
+        <h5 class="mt-4 text-sm font-semibold text-slate-800">Audit trail</h5>
+        <ul id="audit-events" class="mt-2 space-y-2 text-xs text-slate-600"></ul>
+        <form id="reverse-form" class="mt-5 grid gap-3 border-t border-slate-200 pt-4 sm:grid-cols-2">
+          <p class="text-sm font-semibold text-slate-800 sm:col-span-2">Buat jurnal pembalik</p>
+          <label class="text-xs font-medium text-slate-600">Nomor voucher pembalik
+            <input id="reversal-voucher" required maxlength="50" class="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm">
+          </label>
+          <label class="text-xs font-medium text-slate-600">Tanggal pembalikan
+            <input id="reversal-date" type="date" required class="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm">
+          </label>
+          <label class="text-xs font-medium text-slate-600 sm:col-span-2">Alasan
+            <textarea id="reversal-reason" required maxlength="300" rows="2" class="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"></textarea>
+          </label>
+          <button id="reverse-submit" type="submit" class="rounded-lg bg-rose-700 px-4 py-2.5 text-sm font-semibold text-white hover:bg-rose-800 sm:col-span-2">Posting jurnal pembalik</button>
+        </form>
+      </div>
+    </section>
+    </div>
+  </main>
+
+  <footer class="border-t border-slate-200 bg-white">
+    <div class="mx-auto max-w-7xl px-4 py-4 text-xs text-slate-500 sm:px-6 lg:px-8">Aplikasi pembelajaran Akuntansi · Soal 3 · Posting memerlukan sesi Supabase dan konfigurasi backend</div>
+  </footer>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
